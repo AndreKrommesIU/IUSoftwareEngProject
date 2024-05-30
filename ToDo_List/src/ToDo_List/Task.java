@@ -7,8 +7,14 @@ public class Task {
 	public String Project;
 	public String Title;
 	public int Priority;
-	public LocalDate CreationDate;
+	public LocalDate CreationDate = LocalDate.now();
 	public LocalDate DueDate;
+	public boolean completion_status = false; 
+
+	
+	//function to check Title length (limit)
+	//or generally: user inputs
+	
 	
 	//Konstruktor-Methode zum Erstellen von Tasks
 //	public Task(String project, String title, int priority, LocalDate dueDate) {
