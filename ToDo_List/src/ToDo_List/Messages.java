@@ -1,11 +1,11 @@
 package ToDo_List;
 
 public class Messages {
-	public static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_REDTEXT = "\u001B[31m";
-	public static final String ANSI_GREENTEXT = "\u001B[32m";
-	public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
-	public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+	private static final String ANSI_RESET = "\u001B[0m";
+	private static final String ANSI_REDTEXT = "\u001B[31m";
+	private static final String ANSI_GREENTEXT = "\u001B[32m";
+	private static final String ANSI_RED_BACKGROUND = "\u001B[41m";
+	private static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
 	
 	public static void Hauptmenü() {
 		System.out.println("*   *  *****  *      *      *****");

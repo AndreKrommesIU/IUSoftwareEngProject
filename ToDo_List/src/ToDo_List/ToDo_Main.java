@@ -22,24 +22,30 @@ public class ToDo_Main {
 		System.out.println("================Ausgabe-Test erstellter Tasks===============");
 		//======================================	
 		Task Task1 = new Task();
-		Task1.Title = "Homework";
-		Task1.Project = "HOME";
-		Task1.Priority = 1;
-		Task1.DueDate = LocalDate.of(2022, Month.APRIL, 5);
-		Task1.completion_status = true;
+		Task1.setTitle("Homework");
+		Task1.setProject("HOME");
+		Task1.setPriority(1);
+		Task1.setDueDate(LocalDate.of(2022, Month.APRIL, 5));
+		Task1.setCompletion_status(true);
 		System.out.println("Task-Counter = " + Task.counter);	
 		
 		Task Task2 = new Task();
-		Task2.Title = "Cleaning";
-		Task2.Project = "HOME";
-		Task2.Priority = 2;
-		Task2.DueDate = LocalDate.of(2024, 9, 29);
-				
+		Task2.setTitle("Cleaning");
+		Task2.setProject("HOME");
+		Task2.setPriority(3);
+		Task2.setDueDate(LocalDate.of(2024, 9, 29));
+		
+		Task Task3 = new Task();
+		Task3.setTitle("GUI");
+		Task3.setProject("AT WORK");
+		Task3.setPriority(2);
+		Task3.setDueDate(LocalDate.of(2024, 8, 29));
 
 		
 		ToDo_Array my_taskList = new ToDo_Array();
 		my_taskList.addTaskToList(Task1);
 		my_taskList.addTaskToList(Task2);
+		my_taskList.addTaskToList(Task3);
 		
 		my_taskList.writeToDoListFile();
 		
@@ -49,7 +55,20 @@ public class ToDo_Main {
 		read_taskList.readToDoListFile();
 		read_taskList.listAllTasks();
 		
+		read_taskList.sortArrayByProjectThenTitle();
+		read_taskList.listAllTasks();
+		read_taskList.listIncompleteTasks();
 		
+		read_taskList.sortArrayByCompletionStatus();
+		read_taskList.listAllTasks();
+		
+		read_taskList.sortArrayByDueDateASC();
+		read_taskList.listAllTasks();
+		
+
+		
+		GUI myGUI = new GUI();
+		//myGUI.createGUI();
 		
 	}
 	

@@ -1,16 +1,18 @@
 package ToDo_List;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.time.format.DateTimeFormatter;
 
-public class ToDo_Array  {
+public class ToDo_Array {
 	
-	public ArrayList<Task> taskList;
-	public static String filename = "ToDo-List.obj";
+	private ArrayList<Task> taskList;
+	private static String filename = "ToDo-List.obj";
 	
 	//-----------------------Constructor-----------------------------------------------
 	public ToDo_Array() {
@@ -43,7 +45,7 @@ public class ToDo_Array  {
 	public int countIncompleteTasksInList() {
 		int number_of_incomplete_tasks = 0;
 		for (Task t : taskList) {
-			if (t.completion_status == false) {
+			if (t.isCompletion_status() == false) {
 				number_of_incomplete_tasks++;
 			}
 		}
@@ -60,13 +62,13 @@ public class ToDo_Array  {
 				);	
 		//Loop to generate a row String for each task
 		for (Task t : taskList) {
-			String DueDate_String = t.DueDate.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-			String CreationDate_String = t.CreationDate.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			String DueDate_String = t.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			String CreationDate_String = t.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
 			System.out.println(
-					padRight(t.Title, 15) + "| " + 
-					padRight(t.Project, 9) + "| "+
-					padRight(Integer.toString(t.Priority), 5) + "| "+
-					padRight(t.completion_status ? "erledigt " : " " , 9) + "| "+
+					padRight(t.getTitle(), 15) + "| " + 
+					padRight(t.getProject(), 9) + "| "+
+					padRight(Integer.toString(t.getPriority()), 5) + "| "+
+					padRight(t.isCompletion_status() ? "erledigt " : " " , 9) + "| "+
 					padRight(CreationDate_String, 17) + "| "+
 					DueDate_String
 					);
@@ -84,13 +86,13 @@ public class ToDo_Array  {
 				);	
 		//Loop to generate a row String for each task
 		for (Task t : taskList) {
-			if (t.completion_status == false) {
-			String DueDate_String = t.DueDate.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-			String CreationDate_String = t.CreationDate.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			if (t.isCompletion_status() == false) {
+			String DueDate_String = t.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			String CreationDate_String = t.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
 			System.out.println(
-					padRight(t.Title, 15) + "| " + 
-					padRight(t.Project, 9) + "| "+
-					padRight(Integer.toString(t.Priority), 5) + "| "+
+					padRight(t.getTitle(), 15) + "| " + 
+					padRight(t.getProject(), 9) + "| "+
+					padRight(Integer.toString(t.getPriority()), 5) + "| "+
 					padRight(CreationDate_String, 17) + "| "+
 					DueDate_String
 					);
@@ -100,7 +102,7 @@ public class ToDo_Array  {
 	}
 	
 	
-	//Write a File containing the current Task Array
+	//Write a Obj-File containing the current Task Array
 	public void writeToDoListFile(){
 	try {
 		FileOutputStream fileOut = new FileOutputStream(filename);
@@ -116,6 +118,7 @@ public class ToDo_Array  {
 		}
 	}
 	
+	//Read Tasks in existing Obj-File and save as taskList Attribute
 	@SuppressWarnings("unchecked")
 	public void readToDoListFile(){
 	try {
@@ -132,8 +135,32 @@ public class ToDo_Array  {
 		}
 	}
 
+
+    //Array Sorting Methods
+    public void sortArrayByProjectThenTitle() {
+    	Collections.sort(taskList, Comparator.comparing(Task::getProject).thenComparing(Task::getTitle));
+    }
+    public void sortArrayByTitle() {
+    	Collections.sort(taskList, Comparator.comparing(Task::getTitle));
+    }
+    
+    public void sortArrayByDueDateASC() {
+    	Collections.sort(taskList, Comparator.comparing(Task::getDueDateYear).thenComparing(Task::getDueDateMonth).thenComparing(Task::getDueDateDay));
+    }
+    public void sortArrayByDueDateDESC() {
+    	Collections.sort(taskList, Comparator.comparing(Task::getDueDateYear).thenComparing(Task::getDueDateMonth).thenComparing(Task::getDueDateDay));
+    	Collections.reverse(taskList);
+    }
+    public void sortArrayByCreationDateASC() {
+    	Collections.sort(taskList, Comparator.comparing(Task::getCreationDateYear).thenComparing(Task::getCreationDateMonth).thenComparing(Task::getCreationDateDay));
+    }
+    
+    public void sortArrayByCompletionStatus() {
+    	Collections.sort(taskList, Comparator.comparing(Task::isCompletion_status));
+    }
 	
-	//Methods for String Padding
+	
+	//Helper Methods for String Padding
 	public static String padRight(String s, int n) {
 	     return String.format("%-" + n + "s", s);  
 	}
@@ -141,10 +168,5 @@ public class ToDo_Array  {
 	    return String.format("%" + n + "s", s);  
 	}
 	
-	
-	
-	
-
-
 
 }

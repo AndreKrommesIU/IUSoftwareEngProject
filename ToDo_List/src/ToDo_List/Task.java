@@ -7,18 +7,95 @@ public class Task implements Serializable {
 	
 	public static int counter = 0;
 	
-	public String Project;
-	public String Title;
-	public int Priority;
-	public LocalDate CreationDate = LocalDate.now();
-	public LocalDate DueDate;
-	public boolean completion_status = false; 
+	private String Project;
+	private String Title;
+	private int Priority;
+	private LocalDate CreationDate = LocalDate.now();
+	private LocalDate DueDate;
+	private boolean completion_status = false; 
 	
 	Task() {
 		//counstructor über Input Methoden
+		
 		counter++;
 	}
 
+	public String getProject() {
+		return Project;
+	}
+
+	public String getTitle() {
+		return Title;
+	}
+
+	public int getPriority() {
+		return Priority;
+	}
+
+	public LocalDate getCreationDate() {
+		return CreationDate;
+	}
+
+	public LocalDate getDueDate() {
+		return DueDate;
+	}
+
+	public boolean isCompletion_status() {
+		return completion_status;
+	}
+
+	public void setProject(String project) {
+		Project = project;
+	}
+
+	public void setTitle(String title) {
+		Title = title;
+	}
+
+	public void setPriority(int priority) {
+		Priority = priority;
+	}
+
+	public void setCreationDate(LocalDate creationDate) {
+		CreationDate = creationDate;
+	}
+
+	public void setDueDate(LocalDate dueDate) {
+		DueDate = dueDate;
+	}
+
+	public void setCompletion_status(boolean completion_status) {
+		this.completion_status = completion_status;
+	}
+	
+	//Date-Parts Getter
+	public int getDueDateYear() {
+		LocalDate due = this.getDueDate();
+		return due.getYear();
+	}
+	public int getDueDateMonth() {
+		LocalDate due = this.getDueDate();
+		return due.getMonthValue();
+	}
+	public int getDueDateDay() {
+		LocalDate due = this.getDueDate();
+		return due.getDayOfMonth();
+	}
+	
+	public int getCreationDateYear() {
+		LocalDate cre = this.getCreationDate();
+		return cre.getYear();
+	}
+	public int getCreationDateMonth() {
+		LocalDate cre = this.getCreationDate();
+		return cre.getMonthValue();
+	}
+	public int getCreationDateDay() {
+		LocalDate cre = this.getCreationDate();
+		return cre.getDayOfMonth();
+	}
+	
+	
 	//function to check Title length (limit)
 	//or generally: user inputs
 	
