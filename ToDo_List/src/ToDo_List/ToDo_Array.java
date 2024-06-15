@@ -1,27 +1,44 @@
 package ToDo_List;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.time.format.DateTimeFormatter;
 
-public class ToDo_Array {
+public class ToDo_Array  {
 	
 	public ArrayList<Task> taskList;
+	public static String filename = "tasksxyz.obj";
 	
-	//Constructor
+	//-----------------------Constructor-----------------------------------------------
 	public ToDo_Array() {
 		taskList = new ArrayList<Task>();
 	}
-		
-	//option adding a Task-Class Object
+	
+	//-----------------------Getter & Setter-----------------------------------------------
+	public ArrayList<Task> getTaskList() {
+		return taskList;
+	}
+
+	public void setTaskList(ArrayList<Task> taskList) {
+		this.taskList = taskList;
+	}
+	
+	//---------------------------Methods----------------------------------------------------
+	//adding a Task-Class Object
 	public ArrayList<Task> addTaskToList(Task myTask) {
 		this.taskList.add(myTask);
 		return taskList;
 	}
+
 	//counting all Task-Class Objects in the Array
 	public int countAllTasksInList() {
 		int number_of_all_tasks = this.taskList.size();
 		return number_of_all_tasks;
 	}
+	
 	//counting incomplete Task-Class Objects in the Array
 	public int countIncompleteTasksInList() {
 		int number_of_incomplete_tasks = 0;
@@ -33,7 +50,7 @@ public class ToDo_Array {
 		return number_of_incomplete_tasks;
 	}
 
-	//List all tasks given a ToDo Array Object
+	//List all tasks in the ToDo Array Object
 	public void listAllTasks() {
 		//Table Header
 		System.out.println(
@@ -57,7 +74,7 @@ public class ToDo_Array {
 		System.out.println();
 	}
 	
-	//List all tasks given a ToDo Array Object
+	//List all uncompleted tasks in the ToDo Array Object
 	public void listIncompleteTasks() {
 		//Table Header
 		System.out.println(
@@ -82,6 +99,40 @@ public class ToDo_Array {
 		System.out.println();
 	}
 	
+	
+	//Write a File containing the current Task Array
+	public void writeToDoListFile(){
+	try {
+		FileOutputStream fileOut = new FileOutputStream(filename);
+		ObjectOutputStream output = new ObjectOutputStream(fileOut);
+		System.out.println("Datei erfolgreich gespeichert.");
+		output.writeObject(taskList);
+		output.close();
+		fileOut.close();
+		return;
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		return;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void readToDoListFile(){
+	try {
+		FileInputStream fileIn = new FileInputStream(filename);
+		ObjectInputStream input = new ObjectInputStream(fileIn);
+		System.out.println("Datei wird ausgelesen.");
+		taskList = (ArrayList<Task>) input.readObject();
+		input.close();
+		fileIn.close();
+		return;
+		} catch(Exception e) {
+		System.out.println(e.getMessage());
+		return;
+		}
+	}
+
+	
 	//Methods for String Padding
 	public static String padRight(String s, int n) {
 	     return String.format("%-" + n + "s", s);  
@@ -89,6 +140,8 @@ public class ToDo_Array {
 	public static String padLeft(String s, int n) {
 	    return String.format("%" + n + "s", s);  
 	}
+	
+	
 	
 	
 
