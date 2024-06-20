@@ -68,7 +68,7 @@ public class ToDo_Main {
 
 		
 		GUI myGUI = new GUI();
-		//myGUI.createGUI();
+		myGUI.createGUI();
 		
 	}
 	
