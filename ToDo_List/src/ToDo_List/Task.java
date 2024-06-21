@@ -14,8 +14,16 @@ public class Task implements Serializable {
 	private LocalDate DueDate;
 	private boolean completion_status = false; 
 	
+	//Haupt-Konstruktor
+	public Task(String title, String project, int priority, LocalDate dueDate) {
+		Title = title;
+		Project = project;
+		Priority = priority;
+		DueDate = dueDate;
+	}
+
 	Task() {
-		//counstructor über Input Methoden
+		//leerer Test counstructor für Main Methoden
 		
 		counter++;
 	}
@@ -93,6 +101,12 @@ public class Task implements Serializable {
 	public int getCreationDateDay() {
 		LocalDate cre = this.getCreationDate();
 		return cre.getDayOfMonth();
+	}
+
+	@Override
+	public String toString() {
+		return "Task [Title=" + Title + ", Project=" + Project+ ", Priority=" + Priority + ", CreationDate="
+				+ CreationDate + ", DueDate=" + DueDate + ", completion_status=" + completion_status + "]";
 	}
 	
 	

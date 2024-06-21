@@ -2,6 +2,7 @@ package ToDo_List;
 
 import java.util.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 public class ToDo_Main {
 
@@ -47,7 +48,9 @@ public class ToDo_Main {
 		my_taskList.addTaskToList(Task2);
 		my_taskList.addTaskToList(Task3);
 		
-		my_taskList.writeToDoListFile();
+		
+		
+		//my_taskList.writeToDoListFile();
 		
 		
 		
@@ -65,7 +68,6 @@ public class ToDo_Main {
 		read_taskList.sortArrayByDueDateASC();
 		read_taskList.listAllTasks();
 		
-
 		
 		GUI myGUI = new GUI();
 		myGUI.createGUI();
