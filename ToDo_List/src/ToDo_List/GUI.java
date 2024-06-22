@@ -24,9 +24,7 @@ public class GUI {
 	private JFrame frame = new JFrame();
 
 	private JPanel panel1 = new JPanel();
-	private JPanel panel2 = new JPanel();
-	private JPanel panel3 = new JPanel();
-	
+
 	private JButton buttonAdd = new JButton();
 	private JButton buttonShowAll = new JButton();
 	private JButton buttonShowUncompleted = new JButton();
@@ -42,12 +40,12 @@ public class GUI {
 	private ImageIcon listUncompletedTasks = new ImageIcon("ToDo_Icon.png");
 	private ImageIcon deleteCompletedTasks = new ImageIcon("ToDo_DeleteDone.png");
 	
-	public void createGUI(){
+	GUI(){
 		
 	//-----------------------------Frames-------------------------
 		//Size
 		frame.setSize(frameWidth,frameHeight);
-		frame.setTitle("GLORIOUS GUI");
+		frame.setTitle("ToDo-Planner");
 		frame.setResizable(false);
 		
 		//Icon
@@ -58,8 +56,6 @@ public class GUI {
 		
 		//add Panels to Frame
 		frame.add(panel1);
-		frame.add(panel2);
-		frame.add(panel3);
 
 		
 		//Frame-Layout Setting (standard Frame Layout = BorderLayout)
@@ -77,12 +73,6 @@ public class GUI {
 		panel1.setPreferredSize(new Dimension(400,650));
 		panel1.setBackground(Color.white);
 		
-		panel2.setBounds(410,0,300,300);
-		panel2.setBackground(Color.blue);
-		
-		panel3.setBounds(410,310,300,300);
-		panel3.setBackground(Color.green);
-		
 		//Panel-Layout Setting (standard Panel Layout = FlowLayout)
 		panel1.setLayout(null); //necessary to use custom Boundaries for Labels
 		//panel1.setLayout(new FlowLayout());
@@ -96,16 +86,7 @@ public class GUI {
 		addTask = this.rescaleImage(50,50, addTask);
 		buttonAdd.setIcon(addTask);
 
-		
-		buttonShowAll.setBounds(50, 120, 300, 50);
-		buttonShowAll.setText("Alle Tasks auflisten");
-		buttonShowAll.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
-		buttonShowAll.setFont(new Font("Domani", Font.BOLD, 20));
-		buttonShowAll.setHorizontalTextPosition(JButton.LEFT);
-		listAllTasks = this.rescaleImage(50,50, listAllTasks);
-		buttonShowAll.setIcon(listAllTasks);
-		
-		buttonShowUncompleted.setBounds(50, 180, 300, 100);
+		buttonShowUncompleted.setBounds(50, 120, 300, 100);
 		buttonShowUncompleted.setText("<html>Nicht erledigte <br />Tasks auflisten</html>");
 		buttonShowUncompleted.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		buttonShowUncompleted.setFont(new Font("Domani", Font.BOLD, 20));
@@ -113,7 +94,15 @@ public class GUI {
 		listUncompletedTasks = this.rescaleImage(50,50, listUncompletedTasks);
 		buttonShowUncompleted.setIcon(listUncompletedTasks);
 		
-		buttonDeleteUncompleted.setBounds(50, 300, 300, 100);
+		buttonShowAll.setBounds(50, 230, 300, 50);
+		buttonShowAll.setText("Alle Tasks auflisten");
+		buttonShowAll.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
+		buttonShowAll.setFont(new Font("Domani", Font.BOLD, 20));
+		buttonShowAll.setHorizontalTextPosition(JButton.LEFT);
+		listAllTasks = this.rescaleImage(50,50, listAllTasks);
+		buttonShowAll.setIcon(listAllTasks);
+		
+		buttonDeleteUncompleted.setBounds(50, 290, 300, 100);
 		buttonDeleteUncompleted.setText("<html>Erledigte Tasks <br />löschen</html>");//Erledigte Tasks löschen
 		buttonDeleteUncompleted.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		buttonDeleteUncompleted.setFont(new Font("Domani", Font.BOLD, 20));
@@ -125,10 +114,16 @@ public class GUI {
 		buttonAdd.addActionListener(func -> new AddTaskWindow());
 		buttonAdd.addActionListener(func -> frame.dispose());
 		
+		buttonShowUncompleted.addActionListener(func -> new ListIncompleteTasksWindow());
+		buttonShowUncompleted.addActionListener(func -> frame.dispose());
+		
+		buttonShowAll.addActionListener(func -> new ListAllTasksWindow());
+		buttonShowAll.addActionListener(func -> frame.dispose());
+		
 		//-----------------------------Labels-------------------------
-		label.setText("labiles Label");
+		label.setText("Hauptmenü");
 		label.setForeground(new Color(0,0,0));
-		label.setFont(new Font("Domani", Font.BOLD, 20));
+		label.setFont(new Font("Domani", Font.BOLD, 35));
 		
 		//Boundaries
 		label.setBounds(0,0,400,50); //relative to the Container (Frame or Panel);
@@ -137,8 +132,8 @@ public class GUI {
 		label.setBorder(border);
 	
 		//Alignment
-		label.setVerticalAlignment(JLabel.BOTTOM);
-		label.setHorizontalAlignment(JLabel.RIGHT);
+		label.setVerticalAlignment(JLabel.CENTER);
+		label.setHorizontalAlignment(JLabel.CENTER);
 
 		//relational to Images
 		//label.setHorizontalTextPosition(JLabel.CENTER);
@@ -148,8 +143,8 @@ public class GUI {
 		//frame.add(label);
 		panel1.add(label);
 		panel1.add(buttonAdd);
-		panel1.add(buttonShowAll);
 		panel1.add(buttonShowUncompleted);
+		panel1.add(buttonShowAll);
 		panel1.add(buttonDeleteUncompleted);
 		
 		//Setting Frame visibility last to prevent "invisible Buttons" Bug

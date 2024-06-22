@@ -76,6 +76,12 @@ public class ToDo_Array {
 		System.out.println();
 	}
 	
+	
+	public Task[] turnArrayListIntoArray(){
+		Task[] taskArray = taskList.toArray(new Task[taskList.size()]);
+		return taskArray;
+	}
+	
 	//List all uncompleted tasks in the ToDo Array Object
 	public void listIncompleteTasks() {
 		//Table Header

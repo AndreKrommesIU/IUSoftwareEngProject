@@ -7,14 +7,9 @@ import java.time.format.DateTimeFormatter;
 public class ToDo_Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		//changes are good x 4
+
 	
-		Messages.Hauptmenü();
-		
-		Scanner sc = new Scanner(System.in);
-//		int input = sc.nextInt();
-//		System.out.println(input);
+		//Messages.Hauptmenü();
 		
 		
 		
@@ -28,7 +23,6 @@ public class ToDo_Main {
 		Task1.setPriority(1);
 		Task1.setDueDate(LocalDate.of(2022, Month.APRIL, 5));
 		Task1.setCompletion_status(true);
-		System.out.println("Task-Counter = " + Task.counter);	
 		
 		Task Task2 = new Task();
 		Task2.setTitle("Cleaning");
@@ -57,20 +51,11 @@ public class ToDo_Main {
 		ToDo_Array read_taskList = new ToDo_Array();
 		read_taskList.readToDoListFile();
 		read_taskList.listAllTasks();
+		System.out.println(read_taskList.countIncompleteTasksInList());
 		
-		read_taskList.sortArrayByProjectThenTitle();
-		read_taskList.listAllTasks();
-		read_taskList.listIncompleteTasks();
-		
-		read_taskList.sortArrayByCompletionStatus();
-		read_taskList.listAllTasks();
-		
-		read_taskList.sortArrayByDueDateASC();
-		read_taskList.listAllTasks();
-		
-		
-		GUI myGUI = new GUI();
-		myGUI.createGUI();
+		//new GUI();
+		new GUI();
+
 		
 	}
 	

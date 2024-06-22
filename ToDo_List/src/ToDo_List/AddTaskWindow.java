@@ -19,9 +19,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
-public class AddTaskWindow{
+public class AddTaskWindow {
 	
 	
 	private static final int frameWidth = 750;
@@ -44,6 +43,8 @@ public class AddTaskWindow{
 	private JButton returnToMainMenu = new JButton();
 	
 	private ImageIcon logo = new ImageIcon("ToDo_Icon.png");
+	private ImageIcon addTask = new ImageIcon("ToDo_Add.png");
+	private ImageIcon returnToMain = new ImageIcon("Return.png");
 	
 	AddTaskWindow(){
 		
@@ -136,15 +137,19 @@ public class AddTaskWindow{
 		buttonAddTask.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		buttonAddTask.setFont(new Font("Domani", Font.BOLD, 20));
 		buttonAddTask.setHorizontalTextPosition(JButton.LEFT);
+		addTask = this.rescaleImage(50,50, addTask);
+		buttonAddTask.setIcon(addTask);
 		
 		returnToMainMenu.setPreferredSize(new Dimension(500,50));
 		returnToMainMenu.setText("Zurück zum Hauptmenü");
 		returnToMainMenu.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		returnToMainMenu.setFont(new Font("Domani", Font.BOLD, 20));
 		returnToMainMenu.setHorizontalTextPosition(JButton.LEFT);
+		returnToMain = this.rescaleImage(40,40, returnToMain);
+		returnToMainMenu.setIcon(returnToMain);
 		
 		buttonAddTask.addActionListener(func -> addTaskButtonAction());
-		returnToMainMenu.addActionListener(func -> 	new GUI().createGUI());
+		returnToMainMenu.addActionListener(func -> 	new GUI());
 		returnToMainMenu.addActionListener(func -> frame.dispose());
 		
 		panel.add(buttonAddTask);
@@ -170,22 +175,22 @@ public class AddTaskWindow{
 	public void checkInputs(String title, String project, String strPrio, String strDueDate) {
 		if (title.length() > 50) {
 			String Message = "<html>Die eingegebene Beschreibung der Task ist zu lang!<br />Bitte verwenden Sie 50 Zeichen oder weniger.</html>";
-			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		} else if (title.length() == 0){
 			String Message = "<html>Bitte geben Sie eine Beschreibung für die Task</html>";
-			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		}else if (project.length() > 15){
 			String Message = "<html>Bitte verwenden sie eine Projektbeschreibung mit 15 Zeichen oder weniger!</html>";
-			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		}else if (this.checkPrioInput(strPrio)){
 			String Message = "<html>Bitte geben Sie für die Prioriät eine Zahl zwischen 1 und 3 (inkl.) an!</html>";
-			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		}else if (Integer.parseInt(strPrio) > 3 || Integer.parseInt(strPrio) < 1){
 			String Message = "<html>Bitte geben Sie für die Prioriät eine Zahl zwischen 1 und 3 (inkl.) an!</html>";
-			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		}else if (this.checkDueDateInput(strDueDate)){
 			String Message = "<html>Bitte geben Sie ein gütiges Datum im Format TT.MM.JJJJ an!<br />(z.B. 24.10.2010)</html>";
-			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		}else {
 			
 			int priotity = Integer.parseInt(strPrio);
@@ -199,7 +204,7 @@ public class AddTaskWindow{
 			loadedTaskList.writeToDoListFile();
 			
 			String Message = "<html>Task \"" + newTask.getTitle() + "\" erfolgreich angelegt.</html>";
-			JOptionPane.showMessageDialog(null, Message, "", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, Message, "", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	
@@ -220,6 +225,13 @@ public class AddTaskWindow{
 		} catch (Exception e){
 			return true;
 			}	
+	}
+	
+	public ImageIcon rescaleImage(int x, int y, ImageIcon imgc) {
+		Image img = imgc.getImage();
+		Image newImg = img.getScaledInstance(x, y, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon newImgIcon = new ImageIcon(newImg);
+		return newImgIcon;
 	}
 
 }

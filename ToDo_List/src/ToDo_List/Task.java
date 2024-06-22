@@ -1,11 +1,10 @@
 package ToDo_List;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.Serializable;
 
 public class Task implements Serializable {
-	
-	public static int counter = 0;
 	
 	private String Project;
 	private String Title;
@@ -24,8 +23,6 @@ public class Task implements Serializable {
 
 	Task() {
 		//leerer Test counstructor für Main Methoden
-		
-		counter++;
 	}
 
 	public String getProject() {
@@ -108,6 +105,26 @@ public class Task implements Serializable {
 		return "Task [Title=" + Title + ", Project=" + Project+ ", Priority=" + Priority + ", CreationDate="
 				+ CreationDate + ", DueDate=" + DueDate + ", completion_status=" + completion_status + "]";
 	}
+	
+	public int getAttributeCount() {
+		return getClass().getDeclaredFields().length;
+	}
+	
+	public Object[] turnTaskIntoArray(){
+		String CreationDate_String = this.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));		
+		String DueDate_String = this.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+		
+		
+		Object[] taskArr = {
+				this.getTitle(),
+				this.getProject(),
+				this.getPriority(),
+				this.isCompletion_status() ? "erledigt" : " ", 
+				CreationDate_String,
+				DueDate_String};
+		return taskArr;
+	}
+	
 	
 	
 	//function to check Title length (limit)
