@@ -100,11 +100,11 @@ public class Task implements Serializable {
 		return cre.getDayOfMonth();
 	}
 
-	@Override
-	public String toString() {
-		return "Task [Title=" + Title + ", Project=" + Project+ ", Priority=" + Priority + ", CreationDate="
-				+ CreationDate + ", DueDate=" + DueDate + ", completion_status=" + completion_status + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "Task [Title=" + Title + ", Project=" + Project+ ", Priority=" + Priority + ", CreationDate="
+//				+ CreationDate + ", DueDate=" + DueDate + ", completion_status=" + completion_status + "]";
+//	}
 	
 	public int getAttributeCount() {
 		return getClass().getDeclaredFields().length;
@@ -114,13 +114,12 @@ public class Task implements Serializable {
 		String CreationDate_String = this.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));		
 		String DueDate_String = this.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
 		
-		
 		Object[] taskArr = {
 				this.getTitle(),
 				this.getProject(),
 				this.getPriority(),
-				this.isCompletion_status() ? "erledigt" : " ", 
-				CreationDate_String,
+				this.isCompletion_status()// ? "erledigt" : " " 
+				,CreationDate_String,
 				DueDate_String};
 		return taskArr;
 	}

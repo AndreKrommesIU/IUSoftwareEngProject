@@ -44,16 +44,20 @@ public class ToDo_Main {
 		
 		
 		
-		//my_taskList.writeToDoListFile();
+		my_taskList.writeToDoListFile();
 		
 		
 		
 		ToDo_Array read_taskList = new ToDo_Array();
 		read_taskList.readToDoListFile();
 		read_taskList.listAllTasks();
-		System.out.println(read_taskList.countIncompleteTasksInList());
+		System.out.println(read_taskList.countCompleteTasksInList());
 		
-		//new GUI();
+		read_taskList.deleteCompletedTasks();
+		
+		read_taskList.listAllTasks();
+		
+
 		new GUI();
 
 		

@@ -18,8 +18,8 @@ import java.awt.event.ActionListener;
 
 public class GUI {
 	
-	private static final int frameWidth = 750;
-	private static final int frameHeight = 750;
+	private static final int frameWidth = 430;
+	private static final int frameHeight = 700;
 	
 	private JFrame frame = new JFrame();
 
@@ -28,7 +28,6 @@ public class GUI {
 	private JButton buttonAdd = new JButton();
 	private JButton buttonShowAll = new JButton();
 	private JButton buttonShowUncompleted = new JButton();
-	private JButton buttonDeleteUncompleted = new JButton();
 	
 	private JLabel label = new JLabel();
 	
@@ -38,7 +37,6 @@ public class GUI {
 	private ImageIcon addTask = new ImageIcon("ToDo_Add.png");
 	private ImageIcon listAllTasks = new ImageIcon("ToDo_All.png");
 	private ImageIcon listUncompletedTasks = new ImageIcon("ToDo_Icon.png");
-	private ImageIcon deleteCompletedTasks = new ImageIcon("ToDo_DeleteDone.png");
 	
 	GUI(){
 		
@@ -64,6 +62,7 @@ public class GUI {
 		frame.setLayout(new FlowLayout());
 		
 		//other Settings
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		
@@ -102,14 +101,6 @@ public class GUI {
 		listAllTasks = this.rescaleImage(50,50, listAllTasks);
 		buttonShowAll.setIcon(listAllTasks);
 		
-		buttonDeleteUncompleted.setBounds(50, 290, 300, 100);
-		buttonDeleteUncompleted.setText("<html>Erledigte Tasks <br />löschen</html>");//Erledigte Tasks löschen
-		buttonDeleteUncompleted.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
-		buttonDeleteUncompleted.setFont(new Font("Domani", Font.BOLD, 20));
-		buttonDeleteUncompleted.setHorizontalTextPosition(JButton.LEFT);
-		deleteCompletedTasks = this.rescaleImage(50,50, deleteCompletedTasks);
-		buttonDeleteUncompleted.setIcon(deleteCompletedTasks);
-		
 		//add ActionListeners (~ Functionalities) to Buttons
 		buttonAdd.addActionListener(func -> new AddTaskWindow());
 		buttonAdd.addActionListener(func -> frame.dispose());
@@ -145,7 +136,7 @@ public class GUI {
 		panel1.add(buttonAdd);
 		panel1.add(buttonShowUncompleted);
 		panel1.add(buttonShowAll);
-		panel1.add(buttonDeleteUncompleted);
+		
 		
 		//Setting Frame visibility last to prevent "invisible Buttons" Bug
 		frame.setVisible(true);

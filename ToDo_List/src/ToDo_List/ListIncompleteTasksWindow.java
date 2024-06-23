@@ -56,7 +56,7 @@ public class ListIncompleteTasksWindow {
 		
 		frame.setLayout(new FlowLayout(FlowLayout.LEADING,20,10));
 		
-		//frame.add(panel1);
+		frame.setLocationRelativeTo(null);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -75,12 +75,25 @@ public class ListIncompleteTasksWindow {
 		
 		//needs adjustment, if the field will be replaces by Icons/Checkboxes
 		for (int i =0; i < data.length; i++) {
-			if (data[i][3] == "erledigt") {	
+			boolean check = (Boolean) data[i][3];
+			if (check) {	
 				tableModel.removeRow(i);
 			}
 		}
 		
-		JTable table = new JTable(tableModel);
+		JTable table = new JTable(tableModel){
+		       
+				public Class getColumnClass(int column) {
+		            switch (column) {
+		                case 2:
+		                    return Integer.class;
+		                case 3:
+		                    return Boolean.class;
+		                default:
+		                    return String.class;
+		            }
+				}
+			};
 		table.setVisible(true);
 		table.setDefaultEditor(Object.class, null);
 		table.setFont(new Font("Domani", Font.BOLD, 15));
@@ -121,7 +134,7 @@ public class ListIncompleteTasksWindow {
 		returnToMain = this.rescaleImage(40,40, returnToMain);
 		returnToMainMenu.setIcon(returnToMain);
 		
-		returnToMainMenu.addActionListener(func -> 	new GUI());
+		returnToMainMenu.addActionListener(func -> new GUI());
 		returnToMainMenu.addActionListener(func -> frame.dispose());
 		
 	//--------------------------------------------------------------------------------------	

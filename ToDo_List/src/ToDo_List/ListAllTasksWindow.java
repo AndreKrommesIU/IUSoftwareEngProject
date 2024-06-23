@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
@@ -37,9 +38,31 @@ public class ListAllTasksWindow {
 	
 	private JFrame frame = new JFrame();
 
+	private JButton buttonDeleteCompleted = new JButton();
 	private JButton returnToMainMenu = new JButton();
 	
+	private JCheckBox testBox = new JCheckBox();
+	
+	private DefaultTableModel tableModel = new DefaultTableModel();
+	private JTable table = new JTable(){
+	       
+			public Class getColumnClass(int column) {
+	            switch (column) {
+	                case 2:
+	                    return Integer.class;
+	                case 3:
+	                    return Boolean.class;
+	                default:
+	                    return String.class;
+	            }
+			}
+		};
+	
+	private String[] col;
+	private Object[][] data;
+	
 	private ImageIcon logo = new ImageIcon("ToDo_Icon.png");
+	private ImageIcon deleteCompletedTasks = new ImageIcon("ToDo_DeleteDone.png");
 	private ImageIcon returnToMain = new ImageIcon("Return.png");
 
 	
@@ -56,6 +79,8 @@ public class ListAllTasksWindow {
 		
 		frame.setLayout(new FlowLayout(FlowLayout.LEADING,20,10));
 		
+		frame.setLocationRelativeTo(null);
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		//-> beenden über Button, der das initiale Fenster wieder aufruft
@@ -63,16 +88,18 @@ public class ListAllTasksWindow {
 
 	//--------------------------------------------------------------------------------------	
 		
-		String[] col;
-		Object[][] data;
-		
 		col = new String[] {"Titel", "Projekt", "Priorität", "Status", "erstellt am", "fällig bis"};
 		data = this.getData();
 	
-		DefaultTableModel tableModel = new DefaultTableModel(data, col);
-		JTable table = new JTable(tableModel);
+		tableModel.setDataVector(data, col);
+		table.setModel(tableModel);
+		
+
+		System.out.println(data[1][3].getClass());
+		
+		
 		table.setVisible(true);
-		table.setDefaultEditor(Object.class, null);
+		//table.setDefaultEditor(Object.class, null);
 		table.setFont(new Font("Domani", Font.BOLD, 15));
 		
 		table.getColumnModel().getColumn(0).setPreferredWidth(50);
@@ -80,18 +107,6 @@ public class ListAllTasksWindow {
 		table.getColumnModel().getColumn(3).setPreferredWidth(15);
 		
 		table.setAutoCreateRowSorter(true);
-		
-		//for specified columns only (i guess???)
-//		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
-//		table.setRowSorter(sorter);
-//		List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-//		sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-//		sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
-//		sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
-//		sortKeys.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
-//		sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
-//		sortKeys.add(new RowSorter.SortKey(5, SortOrder.ASCENDING));
-//		sorter.setSortKeys(sortKeys);
 		
 	//--------------------------------------------------------------------------------------		
 		
@@ -103,6 +118,15 @@ public class ListAllTasksWindow {
 		//scrollPane.setLayout(new FlowLayout(FlowLayout.LEADING,20,10));
 	//--------------------------------------------------------------------------------------	
 		
+		buttonDeleteCompleted.setBounds(50, 290, 300, 100);
+		buttonDeleteCompleted.setText("<html>Erledigte Tasks <br />löschen</html>");//Erledigte Tasks löschen
+		buttonDeleteCompleted.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
+		buttonDeleteCompleted.setFont(new Font("Domani", Font.BOLD, 20));
+		buttonDeleteCompleted.setHorizontalTextPosition(JButton.LEFT);
+		deleteCompletedTasks = this.rescaleImage(50,50, deleteCompletedTasks);
+		buttonDeleteCompleted.setIcon(deleteCompletedTasks);
+		
+		
 		returnToMainMenu.setPreferredSize(new Dimension(550,50));
 		returnToMainMenu.setText("Zurück zum Hauptmenü");
 		returnToMainMenu.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
@@ -111,14 +135,25 @@ public class ListAllTasksWindow {
 		returnToMain = this.rescaleImage(40,40, returnToMain);
 		returnToMainMenu.setIcon(returnToMain);
 		
-		returnToMainMenu.addActionListener(func -> 	new GUI());
+		returnToMainMenu.addActionListener(func -> new GUI());
 		returnToMainMenu.addActionListener(func -> frame.dispose());
+		
+		buttonDeleteCompleted.addActionListener(func -> deleteCompletedTasksButton());
+
+	//--------------------------------------------------------------------------------------	
+		
+		
+	
 		
 	//--------------------------------------------------------------------------------------	
 		
 		frame.add(scrollPane);
 		
+		frame.add(buttonDeleteCompleted);
 		frame.add(returnToMainMenu);
+		
+		frame.add(testBox);
+		
 		frame.setVisible(true);
 	
 	}
@@ -143,6 +178,31 @@ public class ListAllTasksWindow {
 		return data;
 	}
 
+	public void deleteCompletedTasksButton(){
+		
+		ToDo_Array currentTaskList = new ToDo_Array();
+		currentTaskList.readToDoListFile();
+		
+		int completedTasks = currentTaskList.countCompleteTasksInList();
+		if (completedTasks == 0) {
+			String Message = "<html>Keine erledigten Tasks zum Löschen vorhanden.</html>";
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		String Message = "<html>" + completedTasks +" Task(s) werden mit dieser Aktion gelöscht."
+				+ "<br />Fortfahren?</html>";
+		int userCoice = JOptionPane.showConfirmDialog(null, Message, "Achtung", JOptionPane.YES_NO_OPTION);
+		
+		if (userCoice == 0) {
+			currentTaskList.deleteCompletedTasks();
+			currentTaskList.writeToDoListFile();
+			
+			data = this.getData();
+			tableModel.setDataVector(data, col);
+			table.setModel(tableModel);
+			}
+	}
 	
 	
 	public ImageIcon rescaleImage(int x, int y, ImageIcon imgc) {
@@ -153,3 +213,5 @@ public class ListAllTasksWindow {
 	}
 	
 }
+
+

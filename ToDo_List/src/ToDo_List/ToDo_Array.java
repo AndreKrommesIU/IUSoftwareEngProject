@@ -51,62 +51,26 @@ public class ToDo_Array {
 		}
 		return number_of_incomplete_tasks;
 	}
-
-	//List all tasks in the ToDo Array Object
-	public void listAllTasks() {
-		//Table Header
-		System.out.println(
-				this.countAllTasksInList() + " Task(s) insgesamt:\n" +
-				"Titel          | Projekt  | Prio | Status   | erstellt am      | fällig bis \n"+
-				"============================================================================="
-				);	
-		//Loop to generate a row String for each task
+	
+	//counting incomplete Task-Class Objects in the Array
+	public int countCompleteTasksInList() {
+		int number_of_complete_tasks = 0;
 		for (Task t : taskList) {
-			String DueDate_String = t.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-			String CreationDate_String = t.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-			System.out.println(
-					padRight(t.getTitle(), 15) + "| " + 
-					padRight(t.getProject(), 9) + "| "+
-					padRight(Integer.toString(t.getPriority()), 5) + "| "+
-					padRight(t.isCompletion_status() ? "erledigt " : " " , 9) + "| "+
-					padRight(CreationDate_String, 17) + "| "+
-					DueDate_String
-					);
+			if (t.isCompletion_status() == true) {
+				number_of_complete_tasks++;
+			}
 		}
-		System.out.println();
+		return number_of_complete_tasks;
 	}
 	
+	public void deleteCompletedTasks(){
+		this.taskList.removeIf(t -> (t.isCompletion_status() == true));
+	}
 	
 	public Task[] turnArrayListIntoArray(){
 		Task[] taskArray = taskList.toArray(new Task[taskList.size()]);
 		return taskArray;
 	}
-	
-	//List all uncompleted tasks in the ToDo Array Object
-	public void listIncompleteTasks() {
-		//Table Header
-		System.out.println(
-				this.countIncompleteTasksInList() + " Task(s) zu erledigen:\n" +
-				"Titel          | Projekt  | Prio | erstellt am      | fällig bis \n"+
-				"================================================================="
-				);	
-		//Loop to generate a row String for each task
-		for (Task t : taskList) {
-			if (t.isCompletion_status() == false) {
-			String DueDate_String = t.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-			String CreationDate_String = t.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-			System.out.println(
-					padRight(t.getTitle(), 15) + "| " + 
-					padRight(t.getProject(), 9) + "| "+
-					padRight(Integer.toString(t.getPriority()), 5) + "| "+
-					padRight(CreationDate_String, 17) + "| "+
-					DueDate_String
-					);
-			}
-		}
-		System.out.println();
-	}
-	
 	
 	//Write a Obj-File containing the current Task Array
 	public void writeToDoListFile(){
@@ -139,6 +103,58 @@ public class ToDo_Array {
 		System.out.println(e.getMessage());
 		return;
 		}
+	}
+	
+//-------------from here: (useless) methods fpr console output-----------------
+	
+	//List all tasks in the ToDo Array Object
+	public void listAllTasks() {
+		//Table Header
+		System.out.println(
+				this.countAllTasksInList() + " Task(s) insgesamt:\n" +
+				"Titel          | Projekt  | Prio | Status   | erstellt am      | fällig bis \n"+
+				"============================================================================="
+				);	
+		//Loop to generate a row String for each task
+		for (Task t : taskList) {
+			String DueDate_String = t.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			String CreationDate_String = t.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			System.out.println(
+					padRight(t.getTitle(), 15) + "| " + 
+					padRight(t.getProject(), 9) + "| "+
+					padRight(Integer.toString(t.getPriority()), 5) + "| "+
+					padRight(t.isCompletion_status() ? "erledigt " : " " , 9) + "| "+
+					padRight(CreationDate_String, 17) + "| "+
+					DueDate_String
+					);
+		}
+		System.out.println();
+	}
+	
+	
+	//List all uncompleted tasks in the ToDo Array Object
+	public void listIncompleteTasks() {
+		//Table Header
+		System.out.println(
+				this.countIncompleteTasksInList() + " Task(s) zu erledigen:\n" +
+				"Titel          | Projekt  | Prio | erstellt am      | fällig bis \n"+
+				"================================================================="
+				);	
+		//Loop to generate a row String for each task
+		for (Task t : taskList) {
+			if (t.isCompletion_status() == false) {
+			String DueDate_String = t.getDueDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			String CreationDate_String = t.getCreationDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+			System.out.println(
+					padRight(t.getTitle(), 15) + "| " + 
+					padRight(t.getProject(), 9) + "| "+
+					padRight(Integer.toString(t.getPriority()), 5) + "| "+
+					padRight(CreationDate_String, 17) + "| "+
+					DueDate_String
+					);
+			}
+		}
+		System.out.println();
 	}
 
 
