@@ -17,14 +17,15 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class AddTaskWindow {
 	
 	
-	private static final int frameWidth = 750;
-	private static final int frameHeight = 750;
+	private static final int frameWidth = 540;
+	private static final int frameHeight = 580;
 	private JFrame frame = new JFrame();
 
 	private JPanel panel = new JPanel();
@@ -175,11 +176,18 @@ public class AddTaskWindow {
 	}
 	
 	public void checkInputs(String title, String project, String strPrio, String strDueDate) {
+		
+		
+		
+		
 		if (title.length() > 50) {
 			String Message = "<html>Die eingegebene Beschreibung der Task ist zu lang!<br />Bitte verwenden Sie 50 Zeichen oder weniger.</html>";
 			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		} else if (title.length() == 0){
 			String Message = "<html>Bitte geben Sie eine Beschreibung für die Task</html>";
+			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
+		}else if (this.checkTitleAlreadyExists(title)){
+			String Message = "<html>Task mit der eingegebenen Beschreibung exisitiert bereits!<br />Bitte verwenden Sie einen anderen Titel.</html>";
 			JOptionPane.showMessageDialog(null, Message, "Achtung", JOptionPane.ERROR_MESSAGE);
 		}else if (project.length() > 15){
 			String Message = "<html>Bitte verwenden sie eine Projektbeschreibung mit 15 Zeichen oder weniger!</html>";
@@ -228,6 +236,21 @@ public class AddTaskWindow {
 			return true;
 			}	
 	}
+	
+	public boolean checkTitleAlreadyExists(String title) {
+		
+		ToDo_Array currentTaskList = new ToDo_Array();
+		currentTaskList.readToDoListFile();
+		int numberOfTasks = currentTaskList.countAllTasksInList();
+		
+		for (int i = 0; i < numberOfTasks; i++) {
+			if (title.equals(currentTaskList.getTask(i).getTitle())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	
 	public ImageIcon rescaleImage(int x, int y, ImageIcon imgc) {
 		Image img = imgc.getImage();

@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
 public class GUI {
 	
 	private static final int frameWidth = 430;
-	private static final int frameHeight = 700;
+	private static final int frameHeight = 430;
 	
 	private JFrame frame = new JFrame();
 
@@ -69,7 +69,7 @@ public class GUI {
 	//-----------------------------Panels-------------------------
 		//set Bounds or preferred Sizes (Panel ~ Container for content)
 		//panel1.setBounds(0,0,400,650);
-		panel1.setPreferredSize(new Dimension(400,650));
+		panel1.setPreferredSize(new Dimension(400,380));
 		panel1.setBackground(Color.white);
 		
 		//Panel-Layout Setting (standard Panel Layout = FlowLayout)
@@ -77,7 +77,7 @@ public class GUI {
 		//panel1.setLayout(new FlowLayout());
 		
 	//-----------------------------Buttons-------------------------
-		buttonAdd.setBounds(50, 60, 300, 50);
+		buttonAdd.setBounds(50, 80, 300, 50);
 		buttonAdd.setText("Neue Task anlegen");
 		buttonAdd.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		buttonAdd.setFont(new Font("Domani", Font.BOLD, 20));
@@ -85,7 +85,7 @@ public class GUI {
 		addTask = this.rescaleImage(50,50, addTask);
 		buttonAdd.setIcon(addTask);
 
-		buttonShowUncompleted.setBounds(50, 120, 300, 100);
+		buttonShowUncompleted.setBounds(50, 150, 300, 100);
 		buttonShowUncompleted.setText("<html>Nicht erledigte <br />Tasks auflisten</html>");
 		buttonShowUncompleted.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		buttonShowUncompleted.setFont(new Font("Domani", Font.BOLD, 20));
@@ -93,7 +93,7 @@ public class GUI {
 		listUncompletedTasks = this.rescaleImage(50,50, listUncompletedTasks);
 		buttonShowUncompleted.setIcon(listUncompletedTasks);
 		
-		buttonShowAll.setBounds(50, 230, 300, 50);
+		buttonShowAll.setBounds(50, 270, 300, 50);
 		buttonShowAll.setText("Alle Tasks auflisten");
 		buttonShowAll.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		buttonShowAll.setFont(new Font("Domani", Font.BOLD, 20));

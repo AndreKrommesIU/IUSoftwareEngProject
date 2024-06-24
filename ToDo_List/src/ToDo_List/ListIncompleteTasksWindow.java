@@ -5,11 +5,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import javax.swing.SortOrder;
 import javax.swing.JScrollPane;
@@ -33,21 +35,45 @@ import java.util.ArrayList;
 public class ListIncompleteTasksWindow {
 
 	private static final int frameWidth = 1000;
-	private static final int frameHeight = 600;
+	private static final int frameHeight = 520;
 	
 	private JFrame frame = new JFrame();
 
 	private JButton returnToMainMenu = new JButton();
+	private JButton refreshTableButton = new JButton();
+	
+	private DefaultTableModel tableModel = new DefaultTableModel();
+	private JTable table = new JTable(){
+	        @Override
+			public Class getColumnClass(int column) {
+	            switch (column) {
+	            	case 0:
+	            		return String.class;    
+	            	case 2:
+	                    return Integer.class;
+	                case 3:
+	                    return Boolean.class;
+	                default:
+	                    return String.class;
+	            }
+			}
+	};
+		
+	private String[] col;
+	private Object[][] data;
 	
 	private ImageIcon logo = new ImageIcon("ToDo_Icon.png");
 	private ImageIcon returnToMain = new ImageIcon("Return.png");
-
+	private ImageIcon refreshImg = new ImageIcon("Refresh.png");
 	
-	ListIncompleteTasksWindow(){
-		
+	private ImageIcon checkNo = new ImageIcon("CheckNo.png");
+	private ImageIcon checkYes = new ImageIcon("CheckYes.png");
+	
+	
+	ListIncompleteTasksWindow(){	
 		
 		frame.setSize(frameWidth,frameHeight);
-		frame.setTitle("alle Tasks anzeigen");
+		frame.setTitle("nicht erledigte Tasks anzeigen");
 		frame.setResizable(false);
 		
 		frame.setIconImage(logo.getImage());
@@ -65,37 +91,16 @@ public class ListIncompleteTasksWindow {
 
 	//--------------------------------------------------------------------------------------	
 		
-		String[] col;
-		Object[][] data;
-		
 		col = new String[] {"Titel", "Projekt", "Priorität", "Status", "erstellt am", "fällig bis"};
 		data = this.getData();
-	
-		DefaultTableModel tableModel = new DefaultTableModel(data, col);
 		
-		//needs adjustment, if the field will be replaces by Icons/Checkboxes
-		for (int i =0; i < data.length; i++) {
-			boolean check = (Boolean) data[i][3];
-			if (check) {	
-				tableModel.removeRow(i);
-			}
-		}
+		tableModel.setDataVector(data, col);
+		table.setModel(tableModel);
+
+		table.setAutoCreateRowSorter(false);;
 		
-		JTable table = new JTable(tableModel){
-		       
-				public Class getColumnClass(int column) {
-		            switch (column) {
-		                case 2:
-		                    return Integer.class;
-		                case 3:
-		                    return Boolean.class;
-		                default:
-		                    return String.class;
-		            }
-				}
-			};
 		table.setVisible(true);
-		table.setDefaultEditor(Object.class, null);
+		//table.setDefaultEditor(Object.class, null);
 		table.setFont(new Font("Domani", Font.BOLD, 15));
 		
 		table.getColumnModel().getColumn(0).setPreferredWidth(50);
@@ -116,6 +121,25 @@ public class ListIncompleteTasksWindow {
 //		sortKeys.add(new RowSorter.SortKey(5, SortOrder.ASCENDING));
 //		sorter.setSortKeys(sortKeys);
 		
+	//--------------------------------------------------------------------------------------
+		
+		checkNo = this.rescaleImage(15, 15, checkNo);
+		checkYes = this.rescaleImage(15, 15, checkYes);
+	
+	//https://stackoverflow.com/questions/56877244/trying-to-replace-boolean-checkbox-renderer-editor-in-jtable
+
+		//call and check the default editor component:
+		//DefaultCellEditor dce = (DefaultCellEditor)table.getDefaultEditor(Boolean.class);
+		//JCheckBox cbe = (JCheckBox)dce.getComponent();
+        //frame.add(dce.getComponent());
+		
+		//change the default rendering method for Boolean values:
+			//default check box -> custom unselected/selected Icons
+		TableCellRenderer tcr = table.getDefaultRenderer(Boolean.class);
+		JCheckBox cbr = (JCheckBox)tcr;
+        cbr.setSelectedIcon(checkYes);
+        cbr.setIcon(checkNo);
+		
 	//--------------------------------------------------------------------------------------		
 		
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -126,7 +150,7 @@ public class ListIncompleteTasksWindow {
 		//scrollPane.setLayout(new FlowLayout(FlowLayout.LEADING,20,10));
 	//--------------------------------------------------------------------------------------	
 		
-		returnToMainMenu.setPreferredSize(new Dimension(550,50));
+		returnToMainMenu.setPreferredSize(new Dimension(465,50));
 		returnToMainMenu.setText("Zurück zum Hauptmenü");
 		returnToMainMenu.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		returnToMainMenu.setFont(new Font("Domani", Font.BOLD, 20));
@@ -134,41 +158,96 @@ public class ListIncompleteTasksWindow {
 		returnToMain = this.rescaleImage(40,40, returnToMain);
 		returnToMainMenu.setIcon(returnToMain);
 		
+		refreshTableButton.setPreferredSize(new Dimension(465,50));
+		refreshTableButton.setText("Tabelle aktualisieren");
+		refreshTableButton.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
+		refreshTableButton.setFont(new Font("Domani", Font.BOLD, 20));
+		refreshTableButton.setHorizontalTextPosition(JButton.LEFT);
+		refreshImg = this.rescaleImage(40,40, refreshImg);
+		refreshTableButton.setIcon(refreshImg);
+		
+		returnToMainMenu.addActionListener(func -> saveTableCompletionStatusChangesToFile());
 		returnToMainMenu.addActionListener(func -> new GUI());
 		returnToMainMenu.addActionListener(func -> frame.dispose());
 		
+		refreshTableButton.addActionListener(func -> this.refreshTable());
 	//--------------------------------------------------------------------------------------	
 		
 		frame.add(scrollPane);
-		
+			
 		frame.add(returnToMainMenu);
+		frame.add(refreshTableButton);
+		
+		
 		frame.setVisible(true);
-	
-	
 	
 	}
 	
-	
+	//------------------------------------Methoden--------------------------------------------------
 	
 	public Object[][] getData(){
+		ToDo_Array currentTaskList = new ToDo_Array();
+		currentTaskList.readToDoListFile();
+		
+//		Task[] incompleteTaskArray = new Task[currentTaskList.countIncompleteTasksInList()];
+		
+		int rows  = currentTaskList.countIncompleteTasksInList();
+		int cols = new Task().getAttributeCount(); 				
+		Object[][] data  = new Object[rows][cols];
+		
+		//Loop di Loop, so that only incomplete Tasks show up
+		Task[] currentTaskArray = currentTaskList.turnArrayListIntoArray();
+		ToDo_Array incompleteTasksList = new ToDo_Array();
+		for (int i = 0; i < currentTaskArray.length; i++) {
+			if (!currentTaskArray[i].isCompletion_status()) {
+				incompleteTasksList.addTaskToList(currentTaskArray[i]);
+			}
+		}
+		Task[] incompleteTasksArray = incompleteTasksList.turnArrayListIntoArray();
+		//
+		
+		for (int i=0; i < rows; i++) {
+			Task incompleteTasks = incompleteTasksArray[i];
+			data[i] = incompleteTasks.turnTaskIntoArray();
+		}
+		
+		return data;
+	}
+	
+	public void saveTableCompletionStatusChangesToFile() {
 		
 		ToDo_Array currentTaskList = new ToDo_Array();
 		currentTaskList.readToDoListFile();
 		
-		int rows  = currentTaskList.countAllTasksInList();
-		int cols = new Task().getAttributeCount(); 				
-		Object[][] data  = new Object[rows][cols];
+//		if (currentTaskList.countIncompleteTasksInList()==0) {
+//			return;
+//		};
 		
-		Task[] currentTaskArray = currentTaskList.turnArrayListIntoArray();
+		int numberOfTasksInFile = currentTaskList.getTaskList().size();
+		int rowsInTable = table.getRowCount();
 		
-		for (int i=0; i < rows; i++) {
-			Task currentTask = currentTaskArray[i];
-			data[i] = currentTask.turnTaskIntoArray();
+		for (int i = 0; i < numberOfTasksInFile; i++) {
+			String currentTaskTitle = currentTaskList.getTask(i).getTitle();
+			
+			for (int j = 0; j < rowsInTable; j++) {
+				String currentRowTitle = (String) table.getValueAt(j, 0);
+				if (currentTaskTitle.equals(currentRowTitle)) {
+					boolean currentRowCompletionStatus = (boolean) table.getValueAt(j, 3);
+					currentTaskList.getTask(i).setCompletion_status(currentRowCompletionStatus);
+					continue;
+				}
+				
+			}
 		}
-		return data;
+		currentTaskList.writeToDoListFile();
 	}
 	
-
+	public void refreshTable() {
+		this.saveTableCompletionStatusChangesToFile();
+		data = this.getData();
+		tableModel.setDataVector(data, col);
+		table.setModel(tableModel);
+	}
 	
 	
 	public ImageIcon rescaleImage(int x, int y, ImageIcon imgc) {

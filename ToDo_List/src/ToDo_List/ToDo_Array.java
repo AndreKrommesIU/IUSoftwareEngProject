@@ -29,6 +29,11 @@ public class ToDo_Array {
 	}
 	
 	//---------------------------Methods----------------------------------------------------
+	//get Task Object via Index
+	public Task getTask(int i) {
+		return taskList.get(i);
+	}
+	
 	//adding a Task-Class Object
 	public ArrayList<Task> addTaskToList(Task myTask) {
 		this.taskList.add(myTask);
@@ -68,16 +73,21 @@ public class ToDo_Array {
 	}
 	
 	public Task[] turnArrayListIntoArray(){
-		Task[] taskArray = taskList.toArray(new Task[taskList.size()]);
+		Task[] taskArray = taskList.toArray(new Task[this.countAllTasksInList()]);
 		return taskArray;
 	}
+	
+//	public Task[] turnIncompleteArrayListIntoArray(){
+//		Task[] taskArray = taskList.toArray(new Task[this.countIncompleteTasksInList()]);
+//		return taskArray;
+//	}
 	
 	//Write a Obj-File containing the current Task Array
 	public void writeToDoListFile(){
 	try {
 		FileOutputStream fileOut = new FileOutputStream(filename);
 		ObjectOutputStream output = new ObjectOutputStream(fileOut);
-		System.out.println("Datei erfolgreich gespeichert.");
+		//System.out.println("Datei erfolgreich gespeichert.");
 		output.writeObject(taskList);
 		output.close();
 		fileOut.close();
@@ -94,13 +104,13 @@ public class ToDo_Array {
 	try {
 		FileInputStream fileIn = new FileInputStream(filename);
 		ObjectInputStream input = new ObjectInputStream(fileIn);
-		System.out.println("Datei wird ausgelesen.");
+		//System.out.println("Datei wird ausgelesen.");
 		taskList = (ArrayList<Task>) input.readObject();
 		input.close();
 		fileIn.close();
 		return;
 		} catch(Exception e) {
-		System.out.println(e.getMessage());
+		//System.out.println(e.getMessage());
 		return;
 		}
 	}

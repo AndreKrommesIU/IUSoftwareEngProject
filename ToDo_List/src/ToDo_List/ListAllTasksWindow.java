@@ -8,6 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.JTable;
+import javax.swing.DefaultCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
@@ -34,27 +37,34 @@ import java.util.ArrayList;
 public class ListAllTasksWindow {
 
 	private static final int frameWidth = 1000;
-	private static final int frameHeight = 600;
+	private static final int frameHeight = 520;
 	
 	private JFrame frame = new JFrame();
 
 	private JButton buttonDeleteCompleted = new JButton();
 	private JButton returnToMainMenu = new JButton();
 	
-	private JCheckBox testBox = new JCheckBox();
-	
 	private DefaultTableModel tableModel = new DefaultTableModel();
 	private JTable table = new JTable(){
-	       
+	        @Override
 			public Class getColumnClass(int column) {
 	            switch (column) {
-	                case 2:
+                	case 0:
+                		return String.class;
+	            	case 2:
 	                    return Integer.class;
 	                case 3:
 	                    return Boolean.class;
 	                default:
 	                    return String.class;
 	            }
+	        }
+	        @Override
+	        public boolean isCellEditable(int row, int column) {
+	            if (column == 3) {
+	            	return true;
+	            }
+	            return false;
 			}
 		};
 	
@@ -65,9 +75,11 @@ public class ListAllTasksWindow {
 	private ImageIcon deleteCompletedTasks = new ImageIcon("ToDo_DeleteDone.png");
 	private ImageIcon returnToMain = new ImageIcon("Return.png");
 
+	private ImageIcon checkNo = new ImageIcon("CheckNo.png");
+	private ImageIcon checkYes = new ImageIcon("CheckYes.png");
+	
 	
 	ListAllTasksWindow(){
-		
 		
 		frame.setSize(frameWidth,frameHeight);
 		frame.setTitle("alle Tasks anzeigen");
@@ -95,11 +107,9 @@ public class ListAllTasksWindow {
 		table.setModel(tableModel);
 		
 
-		System.out.println(data[1][3].getClass());
-		
 		
 		table.setVisible(true);
-		//table.setDefaultEditor(Object.class, null);
+		table.setDefaultEditor(Object.class, null);
 		table.setFont(new Font("Domani", Font.BOLD, 15));
 		
 		table.getColumnModel().getColumn(0).setPreferredWidth(50);
@@ -108,6 +118,25 @@ public class ListAllTasksWindow {
 		
 		table.setAutoCreateRowSorter(true);
 		
+	//--------------------------------------------------------------------------------------
+		
+		checkNo = this.rescaleImage(15, 15, checkNo);
+		checkYes = this.rescaleImage(15, 15, checkYes);
+	
+	//https://stackoverflow.com/questions/56877244/trying-to-replace-boolean-checkbox-renderer-editor-in-jtable
+		
+		//call and check the default editor component:
+		//DefaultCellEditor dce = (DefaultCellEditor)table.getDefaultEditor(Boolean.class);
+		//JCheckBox cbe = (JCheckBox)dce.getComponent();
+        //frame.add(dce.getComponent());
+		
+		//change the default rendering method for Boolean values:
+			//default check box -> custom unselected/selected Icons
+		TableCellRenderer tcr = table.getDefaultRenderer(Boolean.class);
+		JCheckBox cbr = (JCheckBox)tcr;
+        cbr.setSelectedIcon(checkYes);
+        cbr.setIcon(checkNo);
+        
 	//--------------------------------------------------------------------------------------		
 		
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -118,8 +147,8 @@ public class ListAllTasksWindow {
 		//scrollPane.setLayout(new FlowLayout(FlowLayout.LEADING,20,10));
 	//--------------------------------------------------------------------------------------	
 		
-		buttonDeleteCompleted.setBounds(50, 290, 300, 100);
-		buttonDeleteCompleted.setText("<html>Erledigte Tasks <br />löschen</html>");//Erledigte Tasks löschen
+		buttonDeleteCompleted.setPreferredSize(new Dimension(465,50));
+		buttonDeleteCompleted.setText("<html>Erledigte Tasks löschen</html>");//Erledigte Tasks löschen
 		buttonDeleteCompleted.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		buttonDeleteCompleted.setFont(new Font("Domani", Font.BOLD, 20));
 		buttonDeleteCompleted.setHorizontalTextPosition(JButton.LEFT);
@@ -127,7 +156,7 @@ public class ListAllTasksWindow {
 		buttonDeleteCompleted.setIcon(deleteCompletedTasks);
 		
 		
-		returnToMainMenu.setPreferredSize(new Dimension(550,50));
+		returnToMainMenu.setPreferredSize(new Dimension(465,50));
 		returnToMainMenu.setText("Zurück zum Hauptmenü");
 		returnToMainMenu.setFocusable(false); //Can no longer get focused (e.g. by pressing tabulator)
 		returnToMainMenu.setFont(new Font("Domani", Font.BOLD, 20));
@@ -135,30 +164,24 @@ public class ListAllTasksWindow {
 		returnToMain = this.rescaleImage(40,40, returnToMain);
 		returnToMainMenu.setIcon(returnToMain);
 		
+		returnToMainMenu.addActionListener(func -> saveTableCompletionStatusChangesToFile());
 		returnToMainMenu.addActionListener(func -> new GUI());
 		returnToMainMenu.addActionListener(func -> frame.dispose());
 		
 		buttonDeleteCompleted.addActionListener(func -> deleteCompletedTasksButton());
-
-	//--------------------------------------------------------------------------------------	
-		
-		
-	
 		
 	//--------------------------------------------------------------------------------------	
 		
 		frame.add(scrollPane);
 		
-		frame.add(buttonDeleteCompleted);
 		frame.add(returnToMainMenu);
-		
-		frame.add(testBox);
-		
-		frame.setVisible(true);
+		frame.add(buttonDeleteCompleted);
 	
+		frame.setVisible(true);
+
 	}
 	
-	
+	//------------------------------------Methoden--------------------------------------------------
 	
 	public Object[][] getData(){
 		
@@ -175,10 +198,42 @@ public class ListAllTasksWindow {
 			Task currentTask = currentTaskArray[i];
 			data[i] = currentTask.turnTaskIntoArray();
 		}
+		
 		return data;
+	}
+	
+	public void saveTableCompletionStatusChangesToFile() {
+		
+		
+		ToDo_Array currentTaskList = new ToDo_Array();
+		currentTaskList.readToDoListFile();
+		
+//		ArrayList<String> titleList = new ArrayList<String>();
+//		for (int i = 0; i < numberOfTasksInFile; i++) {
+//			titleList.add(currentTaskList.getTask(i).getTitle());
+//		}
+		int numberOfTasksInFile = currentTaskList.getTaskList().size();
+		int rowsInTable = table.getRowCount();
+		
+		for (int i = 0; i < numberOfTasksInFile; i++) {
+			String currentTaskTitle = currentTaskList.getTask(i).getTitle();
+			
+			for (int j = 0; j < rowsInTable; j++) {
+				String currentRowTitle = (String) table.getValueAt(j, 0);
+				if (currentTaskTitle.equals(currentRowTitle)) {
+					boolean currentRowCompletionStatus = (boolean) table.getValueAt(j, 3);
+					currentTaskList.getTask(i).setCompletion_status(currentRowCompletionStatus);
+					continue;
+				}
+				
+			}
+		}
+		currentTaskList.writeToDoListFile();
 	}
 
 	public void deleteCompletedTasksButton(){
+		
+		this.saveTableCompletionStatusChangesToFile();
 		
 		ToDo_Array currentTaskList = new ToDo_Array();
 		currentTaskList.readToDoListFile();
@@ -203,6 +258,7 @@ public class ListAllTasksWindow {
 			table.setModel(tableModel);
 			}
 	}
+	
 	
 	
 	public ImageIcon rescaleImage(int x, int y, ImageIcon imgc) {
