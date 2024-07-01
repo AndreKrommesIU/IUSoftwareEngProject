@@ -56,6 +56,14 @@ public class ListIncompleteTasksWindow {
 	                default:
 	                    return String.class;
 	            }
+	            
+			}
+	        @Override
+	        public boolean isCellEditable(int row, int column) {
+	            if (column == 3) {
+	            	return true;
+	            }
+	            return false;
 			}
 	};
 		
@@ -96,11 +104,11 @@ public class ListIncompleteTasksWindow {
 		
 		tableModel.setDataVector(data, col);
 		table.setModel(tableModel);
-
-		table.setAutoCreateRowSorter(false);;
+		table.setAutoCreateRowSorter(false);
+		table.getTableHeader().setReorderingAllowed(false);
 		
 		table.setVisible(true);
-		//table.setDefaultEditor(Object.class, null);
+		table.setDefaultEditor(Object.class, null);
 		table.setFont(new Font("Domani", Font.BOLD, 15));
 		
 		table.getColumnModel().getColumn(0).setPreferredWidth(50);
@@ -121,10 +129,14 @@ public class ListIncompleteTasksWindow {
 //		sortKeys.add(new RowSorter.SortKey(5, SortOrder.ASCENDING));
 //		sorter.setSortKeys(sortKeys);
 		
-	//--------------------------------------------------------------------------------------
+	//--------------------------Custom CheckBox Icons------------------------------------------------------------
 		
-		checkNo = this.rescaleImage(15, 15, checkNo);
-		checkYes = this.rescaleImage(15, 15, checkYes);
+		//BUG: while Mouse is pressed, the Icon shows the (pressed) default CheckBox Icon instead of the custom one
+		//happens only for JCheckboxes in a Table!!
+		//ums verrecken nicht hinbekommen das zu fixen, also nein!
+		
+//		checkNo = this.rescaleImage(15, 15, checkNo);
+//		checkYes = this.rescaleImage(15, 15, checkYes);
 	
 	//https://stackoverflow.com/questions/56877244/trying-to-replace-boolean-checkbox-renderer-editor-in-jtable
 
@@ -135,10 +147,12 @@ public class ListIncompleteTasksWindow {
 		
 		//change the default rendering method for Boolean values:
 			//default check box -> custom unselected/selected Icons
-		TableCellRenderer tcr = table.getDefaultRenderer(Boolean.class);
-		JCheckBox cbr = (JCheckBox)tcr;
-        cbr.setSelectedIcon(checkYes);
-        cbr.setIcon(checkNo);
+//		TableCellRenderer tcr = table.getDefaultRenderer(Boolean.class);
+//		JCheckBox cbr = (JCheckBox)tcr;
+//        cbr.setSelectedIcon(checkYes);
+//        cbr.setIcon(checkNo);
+		
+		
 		
 	//--------------------------------------------------------------------------------------		
 		
